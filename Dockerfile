@@ -20,6 +20,6 @@ RUN npm install
 
 COPY . .
 
-EXPOSE 5004
+EXPOSE 3003
 
 CMD [ "npm", "run", "start-prod" ]

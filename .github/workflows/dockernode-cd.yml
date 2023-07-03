@@ -1,0 +1,21 @@
+name: Docker + Node deploy
+
+on:
+  push:
+    branches: [ master, cd ]
+
+
+jobs:
+
+  deploy:
+
+    runs-on: self-hosted
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: PLACEHOLDER
+        run: docker
+      - name: Wait for server to start up
+        run: sleep 5
+      - name: Check if online
+        run: curl localhost:3003

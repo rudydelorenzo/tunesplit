@@ -3,7 +3,7 @@ services:
     build: .
     container_name: tunesplit_app
     ports:
-      - "5004:5004"
+      - "3003:3003"
     volumes:
       - models:/usr/src/app/pretrained_models
     restart: always
