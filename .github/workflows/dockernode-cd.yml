@@ -15,5 +15,5 @@ jobs:
       - uses: actions/checkout@v2
       - name: Start docker compose
         run: docker compose up --build --detach
-      - name: Check if online (60 secs max)
-        run: wget --retry-connrefused -w 5 --tries=6 localhost:3003
+      - name: Check if online (15 tries with backoff)
+        run: wget --retry-connrefused --tries=15 --spider localhost:3003
