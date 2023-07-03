@@ -13,9 +13,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: PLACEHOLDER
-        run: docker
+      - name: Start docker compose
+        run: docker compose up --build --detach
       - name: Wait for server to start up
-        run: sleep 5
+        run: sleep 10
       - name: Check if online
         run: curl localhost:3003
