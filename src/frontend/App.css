@@ -38,11 +38,13 @@
 }
 
 .read-the-docs {
-  position: absolute;
-  bottom: 2%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-
   color: #888;
   font-size: small;
+}
+
+.bottom-text {
+  position: absolute;
+  bottom: 0%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }

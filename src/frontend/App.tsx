@@ -1,6 +1,6 @@
 import "./App.css";
 import { DropzoneButton } from "./Dropzone";
-import { FileWithPath } from "@mantine/dropzone";
+import {FileRejection, FileWithPath} from "@mantine/dropzone";
 import { useState } from "react";
 
 const getCurrentURL = () => {
@@ -86,16 +86,22 @@ function App() {
     }
   };
 
+  const handleFileRejection = (files: FileRejection[]) => console.log("rejected files", files)
+
   return (
     <>
       <h1>TuneSplit</h1>
       <DropzoneButton
         onDrop={handleOnFileSelected}
-        onReject={(files) => console.log("rejected files", files)}
+        onReject={handleFileRejection}
         loading={isLoading}
       />
 
-      <p className="read-the-docs">Created in Edmonton by @rudydelorenzo</p>
+      <div className={"bottom-text"}>
+        <p className="read-the-docs">Created with ❤️ by <a href={"https://github.com/rudydelorenzo"}>@rudydelorenzo</a></p>
+        <p className="read-the-docs">Separation by <a href={"https://github.com/deezer/spleeter"}>spleeter</a></p>
+      </div>
+
     </>
   );
 }
