@@ -1,0 +1,19 @@
+name: Docker + Node deploy
+
+on:
+  push:
+    branches: [ master ]
+
+
+jobs:
+
+  deploy:
+
+    runs-on: self-hosted
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Start docker compose
+        run: docker compose up --build --detach
+      - name: Check if online (15 tries with backoff)
+        run: wget --retry-connrefused --tries=15 --spider localhost:3003

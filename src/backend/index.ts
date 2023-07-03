@@ -12,7 +12,7 @@ const SPLEETER_OUTPUT_DIR = "spleeter_output";
 const ZIP_OUTPUT_FOLDER_NAME = "zipped_output";
 
 const app = express();
-const backendPort = process.env.PORT || 5004;
+const backendPort = process.env.PORT || 3003;
 
 const storage = multer.diskStorage({
   destination: function (_req, _file, cb) {
