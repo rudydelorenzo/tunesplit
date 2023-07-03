@@ -14,7 +14,9 @@
     "start": "node .",
     "start-prod": "npm run build && npm start",
     "start-dev": "vite build --watch & nodemon --watch ./src/backend --ignore ./dist/ --exec \"npm run build-backend && npm start\"",
-    "dev-frontend": "npm run dev"
+    "dev-frontend": "npm run dev",
+    "docker": "docker compose up --build",
+    "docker-deploy": "docker compose up --build --detach"
   },
   "dependencies": {
     "@emotion/react": "^11.11.1",
