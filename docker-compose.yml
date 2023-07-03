@@ -1,11 +1,13 @@
 services:
   app:
     build: .
-    container_name: splitit_app
+    container_name: tunesplit_app
     ports:
       - "5004:5004"
     volumes:
       - models:/usr/src/app/pretrained_models
+    restart: always
 
 volumes:
   models:
+    name: tunesplit_models

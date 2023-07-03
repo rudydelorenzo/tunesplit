@@ -45,7 +45,7 @@ function showDownload(data: Blob, name: string, _mimetype: string) {
   link.dispatchEvent(event);
 }
 
-const submitFilesForSplitting = async (files: File[]): Promise<Blob> => {
+const submitFilesForSplitting = async (files: File[]): Promise<Response> => {
   const formData = new FormData();
   for (let i = 0; i < files.length; i++) {
     formData.append("files", files[i]);
@@ -58,7 +58,7 @@ const submitFilesForSplitting = async (files: File[]): Promise<Blob> => {
 
   console.log(response);
 
-  return response.blob();
+  return response;
 };
 
 function App() {
@@ -69,20 +69,26 @@ function App() {
 
     const fileWithPath = files[0];
 
-    const fileBlob = await submitFilesForSplitting([fileWithPath]);
+    const response = await submitFilesForSplitting([fileWithPath]);
 
     setIsLoading(false);
 
-    showDownload(
-      fileBlob,
-      `${getBaseFileName(fileWithPath.name)}.zip`,
-      "application/zip"
-    );
+    if (response.status >= 200 && response.status < 300) {
+      const fileBlob = await response.blob();
+
+      showDownload(
+        fileBlob,
+        `${getBaseFileName(fileWithPath.name)}.zip`,
+        "application/zip"
+      );
+    } else {
+      console.error("ERROR: Received non-200 response from server");
+    }
   };
 
   return (
     <>
-      <h1>SplitIt</h1>
+      <h1>TuneSplit</h1>
       <DropzoneButton
         onDrop={handleOnFileSelected}
         onReject={(files) => console.log("rejected files", files)}

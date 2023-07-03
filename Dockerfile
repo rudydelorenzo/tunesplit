@@ -1,6 +1,7 @@
 FROM ubuntu:latest
 LABEL authors="rudydelorenzo"
 
+# SET UP ENV AND INSTALL DEPENDENCIES
 RUN apt-get update
 RUN apt-get -y install curl
 RUN apt-get -y install python3 python3-pip ffmpeg
@@ -10,8 +11,7 @@ RUN apt-get -y install nodejs
 
 RUN pip3 install spleeter
 
-
-
+# COPY APP FILES AND BUILD + START
 WORKDIR /usr/src/app
 
 COPY package*.json ./
