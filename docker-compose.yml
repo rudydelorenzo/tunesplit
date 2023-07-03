@@ -1,0 +1,6 @@
+services:
+  app:
+    build: .
+    container_name: splitit_app
+    ports:
+      - "5004:5004"
