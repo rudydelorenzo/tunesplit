@@ -16,4 +16,4 @@ jobs:
       - name: Start docker compose
         run: docker compose up --build --detach
       - name: Check if online (60 secs max)
-        run: wget --retry-connrefused --waitretry=5 --tries=6 localhost:3003
+        run: wget --retry-connrefused -w 5 --tries=6 localhost:3003
