@@ -1,5 +1,7 @@
 services:
   app:
+    environment:
+      - ENVIRONMENT=production
     build: .
     container_name: tunesplit_app
     ports:

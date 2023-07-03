@@ -3,7 +3,8 @@
 ## Usage
 
 > **Note**
-> You'll need docker to run this application
+> 
+> You'll need [docker](https://www.docker.com/) to run this application
  
 ### Run the app
 `npm run docker`
@@ -26,6 +27,9 @@
 
 ### Committing
 `git cz`
+
+### Logging
+Use `log(message)` instead of `console.log(message)`
 
 ## Roadmap
 - [x] Auto cleanup (maybe when download is done?)

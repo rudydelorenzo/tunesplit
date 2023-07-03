@@ -14,6 +14,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Start docker compose
-        run: docker compose up --build --detach
+        run: npm run docker-deploy
       - name: Check if online (15 tries with backoff)
         run: wget --retry-connrefused --tries=15 --spider localhost:3003

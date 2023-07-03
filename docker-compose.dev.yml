@@ -1,0 +1,4 @@
+services:
+  app:
+    environment:
+      - ENVIRONMENT=development
