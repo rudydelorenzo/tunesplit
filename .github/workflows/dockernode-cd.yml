@@ -16,4 +16,4 @@ jobs:
       - name: Start docker compose
         run: docker compose up --build --detach
       - name: Check if online (60 secs max)
-        run: curl --retry --retry-delay 5 --retry-max-time 60 localhost:3003
+        run: curl --retry-delay 5 --retry-max-time 60 localhost:3003
