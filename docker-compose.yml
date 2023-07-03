@@ -4,3 +4,8 @@ services:
     container_name: splitit_app
     ports:
       - "5004:5004"
+    volumes:
+      - models:/usr/src/app/pretrained_models
+
+volumes:
+  models:
