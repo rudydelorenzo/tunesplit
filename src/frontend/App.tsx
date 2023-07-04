@@ -1,10 +1,10 @@
 import "./App.css";
 import { DropzoneButton } from "./Dropzone";
-import {FileRejection, FileWithPath} from "@mantine/dropzone";
+import { FileRejection, FileWithPath } from "@mantine/dropzone";
 import { useState } from "react";
-import {Dialog, Flex, Group, Text, } from "@mantine/core";
-import {useDisclosure} from "@mantine/hooks";
-import {IconCloudExclamation, } from "@tabler/icons-react";
+import { Dialog, Flex, Group, Text } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
+import { IconCloudExclamation, IconHeart } from "@tabler/icons-react";
 
 const getCurrentURL = () => {
   return (
@@ -66,8 +66,13 @@ const submitFilesForSplitting = async (files: File[]): Promise<Response> => {
 
 function App() {
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<{errorCode: number; errorMessage: string}>()
+  const [error, setError] = useState<{
+    errorCode: number;
+    errorMessage: string;
+  }>();
   const [opened, { open, close }] = useDisclosure(false);
+
+  const DIALOG_AUTO_DISMISS_SECONDS = 5;
 
   const handleOnFileSelected = async (files: FileWithPath[]) => {
     setIsLoading(true);
@@ -88,11 +93,16 @@ function App() {
       );
     } else {
       open();
-      setError({errorCode: response.status, errorMessage: response.statusText})
+      setTimeout(() => close(), DIALOG_AUTO_DISMISS_SECONDS * 1000);
+      setError({
+        errorCode: response.status,
+        errorMessage: response.statusText,
+      });
     }
   };
 
-  const handleFileRejection = (files: FileRejection[]) => console.log("rejected files", files)
+  const handleFileRejection = (files: FileRejection[]) =>
+    console.log("rejected files", files);
 
   return (
     <>
@@ -104,43 +114,59 @@ function App() {
       />
 
       <Dialog
-          opened={opened}
-          withCloseButton
-          onClose={close}
-          size="lg"
-          radius="md"
-          position={{ bottom: 40, left: 40 }}
-          transition="slide-up"
-          transitionDuration={300}
-          transitionTimingFunction="ease"
-          p={20}
-          shadow={"md"}
+        opened={opened}
+        withCloseButton
+        onClose={close}
+        size="lg"
+        radius="md"
+        position={{ bottom: 40, left: 40 }}
+        transition="slide-up"
+        transitionDuration={300}
+        transitionTimingFunction="ease"
+        p={20}
+        shadow={"md"}
+        withBorder
       >
         <Group align={"flex-start"}>
+          <IconCloudExclamation />
 
-          <IconCloudExclamation/>
+          <div
+            style={{
+              minWidth: "3px",
+              borderRadius: "10px",
+              minHeight: "80px",
+              clear: "both",
+              backgroundColor: "#C92A2A",
+            }}
+          ></div>
 
-          <div style={{minWidth: "3px", borderRadius: "10px", minHeight: "80px", clear:"both", backgroundColor: "#C92A2A"}}></div>
-
-            <Flex align="flex-start" direction={'column'}>
-              <Text size="lg" mb="xs" weight={500}>
-                Oops!
-              </Text>
-              <Text size="xs" mb="xs" weight={100}>
-                There's been a problem, try again
-              </Text>
-              <Text size="xs" mb="xs" weight={100}>
-                {`${error?.errorCode}: ${error?.errorMessage}`}
-              </Text>
-            </Flex>
+          <Flex align="flex-start" direction={"column"}>
+            <Text size="lg" mb="xs" weight={500}>
+              Oops!
+            </Text>
+            <Text size="xs" mb="xs" weight={100}>
+              There's been a problem, try again
+            </Text>
+            <Text size="xs" mb="xs" weight={100}>
+              {`${error?.errorCode}: ${error?.errorMessage}`}
+            </Text>
+          </Flex>
         </Group>
       </Dialog>
 
       <div className={"bottom-text"}>
-        <p className="read-the-docs">Created with ❤️ by <a href={"https://github.com/rudydelorenzo"}>@rudydelorenzo</a></p>
-        <p className="read-the-docs">Separation by <a href={"https://github.com/deezer/spleeter"}>spleeter</a></p>
+        <Flex gap={5} align={"center"}>
+          <p className="read-the-docs">Made with </p>
+          <IconHeart size={20} />
+          <p className={"read-the-docs"}>
+            by <a href={"https://github.com/rudydelorenzo"}>@rudydelorenzo</a>
+          </p>
+        </Flex>
+        <p className="read-the-docs">
+          Separation by{" "}
+          <a href={"https://github.com/deezer/spleeter"}>spleeter</a>
+        </p>
       </div>
-
     </>
   );
 }
