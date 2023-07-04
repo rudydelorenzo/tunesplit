@@ -17,6 +17,7 @@ export const MIME_AUDIO_TYPES = {
   Ogg_Vorbis: "audio/ogg",
   Vorbis: "audio/vorbis",
   wav: "audio/vnd.wav",
+  flac: "audio/flac",
 } as const;
 
 export const MIME_TYPES = {

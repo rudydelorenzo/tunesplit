@@ -37,6 +37,8 @@ export function DropzoneButton({
   const { classes, theme } = useStyles();
   const openRef = useRef<() => void>(null);
 
+  const MAX_FILE_SIZE_GB = 5;
+
   return (
     <div className={classes.wrapper}>
       <Dropzone
@@ -46,7 +48,7 @@ export function DropzoneButton({
         className={classes.dropzone}
         radius="md"
         accept={Object.values(MIME_AUDIO_TYPES)}
-        maxSize={100000 * 1024 ** 2}
+        maxSize={MAX_FILE_SIZE_GB * 1_000_000_000}
         {...rest}
       >
         <div style={{ pointerEvents: "none" }}>
@@ -76,7 +78,9 @@ export function DropzoneButton({
 
           <Text ta="center" fw={700} fz="lg" mt="xl">
             <Dropzone.Accept>Drop files here</Dropzone.Accept>
-            <Dropzone.Reject>Audio files less than 10GB</Dropzone.Reject>
+            <Dropzone.Reject>
+              Audio files less than {MAX_FILE_SIZE_GB}GB
+            </Dropzone.Reject>
             <Dropzone.Idle>Upload audio</Dropzone.Idle>
           </Text>
           <Text ta="center" fz="sm" mt="xs" c="dimmed">
