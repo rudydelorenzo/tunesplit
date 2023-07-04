@@ -34,7 +34,7 @@ Use `log(message)` instead of `console.log(message)`
 ## Roadmap
 - [x] Auto cleanup (maybe when download is done?)
 - [x] Add auto-restart of container (and auto-start on boot)
-- [ ] Error handling to backend and frontend
+- [x] Error handling to backend and frontend
 - [x] Set up docker volumes
 - [x] Set up CI/CD
 
