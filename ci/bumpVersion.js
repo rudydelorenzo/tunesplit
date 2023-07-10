@@ -9,9 +9,6 @@ const getMatchInMessages = (messages, matchRegex) => {
     }
 }
 
-const currentVersion = execSync('npm pkg get version').toString().replace(/['"]+/g, '')
-
-console.log(currentVersion)
 
 if (!process.env.GITHUB_EVENT_PATH && !IN_DEVELOPMENT) {
     process.exit(1);
