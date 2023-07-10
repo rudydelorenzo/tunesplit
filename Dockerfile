@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM ubuntu:22.04
 LABEL authors="rudydelorenzo"
 
 # SET UP ENV AND INSTALL DEPENDENCIES
@@ -6,6 +6,7 @@ RUN apt-get update
 RUN apt-get -y install curl
 RUN apt-get -y install python3 python3-pip ffmpeg
 
+## INSTALL NODE 18.x LTS
 RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
 RUN apt-get -y install nodejs
 

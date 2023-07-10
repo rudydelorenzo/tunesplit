@@ -120,15 +120,19 @@ app.post(`/convert`, upload.array("files"), async (req, res) => {
 const MAX_FILE_AGE_MINUTES = 5;
 
 const removeFilesIfOlder = (folder: string, age: number): void => {
-  fs.readdirSync(folder).forEach((file) => {
-    const isOlder =
-      fs.statSync(`${folder}/${file}`).ctime.getTime() <
-      Date.now() - age * 60 * 1000; // 604800000 = 7 * 24 * 60 * 60 * 1000
+  try {
+    fs.readdirSync(folder).forEach((file) => {
+      const isOlder =
+          fs.statSync(`${folder}/${file}`).ctime.getTime() <
+          Date.now() - age * 60 * 1000; // 604800000 = 7 * 24 * 60 * 60 * 1000
 
-    if (isOlder) {
-      fs.unlinkSync(`${folder}/${file}`);
-    }
-  });
+      if (isOlder) {
+        fs.unlinkSync(`${folder}/${file}`);
+      }
+    });
+  } catch (e) {
+    log(`DIRECTORY ${folder} DOES NOT EXIST`)
+  }
 };
 
 const sweepAllDirectories = () => {
