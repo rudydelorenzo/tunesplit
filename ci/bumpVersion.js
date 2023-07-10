@@ -2,6 +2,8 @@ import {execSync} from "child_process";
 import { readFile } from 'fs/promises';
 
 const IN_DEVELOPMENT = true;
+const BUMP_COMMIT_USERNAME = 'ci'
+const BUMP_COMMIT_EMAIL = 'ci@rudydelorenzo.noreply.ca'
 
 const getMatchInMessages = (messages, matchRegex) => {
     for (const message of messages) {
@@ -20,6 +22,9 @@ const commits = JSON.parse(
     )
 ).commits;
 
+execSync(`git config user.name ${BUMP_COMMIT_USERNAME}`)
+execSync(`git config user.email ${BUMP_COMMIT_EMAIL}`)
+
 const commitMessages = commits.map((commit) => commit.message)
 
 console.log('commitMessages:')
@@ -35,11 +40,6 @@ if (getMatchInMessages(commitMessages, /BREAKING/)) {
     console.log('BUMPING PATCH')
     execSync('npm version patch --force')
 }
-
-
-const commitHistory = execSync('git log').toString()
-
-console.log('commitHistory', commitHistory)
 
 
 console.log('PUSHING')
