@@ -9,6 +9,8 @@ jobs:
 
   deploy:
 
+    permissions: write-all
+
     runs-on: self-hosted
 
     steps:
