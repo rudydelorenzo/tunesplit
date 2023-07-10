@@ -11,6 +11,12 @@ const UPLOAD_FOLDER_NAME = "uploads";
 const SPLEETER_OUTPUT_DIR = "spleeter_output";
 const ZIP_OUTPUT_FOLDER_NAME = "zipped_output";
 
+const SPEETER_MODES = {
+  "TWO_STEMS": '2stems',
+  "FOUR_STEMS": '4stems',
+  "FIVE_STEMS": '5stems'
+} as const
+
 const ENV = process.env.ENVIRONMENT || 'development'
 const backendPort = process.env.PORT || 3003;
 
@@ -48,7 +54,7 @@ const split = async (file: Express.Multer.File): Promise<string> => {
   log("START SPLITTING...");
 
   execSync(
-    `spleeter separate -p spleeter:2stems -o ${SPLEETER_OUTPUT_DIR} ${file.path}`,
+    `spleeter separate -p spleeter:${SPEETER_MODES.TWO_STEMS} -o ${SPLEETER_OUTPUT_DIR} ${file.path}`,
       {
         stdio: ENV !== 'production' ? "inherit" : "ignore"
       }

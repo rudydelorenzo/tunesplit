@@ -13,6 +13,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+      - name: Bump version
+        uses: phips28/gh-action-bump-version@master
+        with:
+          minor-wording: 'feat'
+          major-wording: 'MAJOR,cut-major,BREAKING,breaking'
+          patch-wording: 'fix'     # Providing patch-wording will override commits
       - name: Start docker compose
         run: npm run docker-deploy
       - name: Check if online (15 tries with backoff)

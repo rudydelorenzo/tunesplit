@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Dialog, Flex, Group, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconCloudExclamation, IconHeart } from "@tabler/icons-react";
+import { version } from '../../package.json'
 
 const getCurrentURL = () => {
   return (
@@ -164,7 +165,7 @@ function App() {
         </Flex>
         <p className="read-the-docs">
           Separation by{" "}
-          <a href={"https://github.com/deezer/spleeter"}>spleeter</a>
+          <a href={"https://github.com/deezer/spleeter"}>spleeter</a> | v. {version}
         </p>
       </div>
     </>
