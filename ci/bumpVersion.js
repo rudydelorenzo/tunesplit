@@ -2,11 +2,11 @@ import {execSync} from "child_process";
 import { readFile } from 'fs/promises';
 
 const IN_DEVELOPMENT = true;
-const BUMP_COMMIT_USERNAME = 'ci'
+const BUMP_COMMIT_USERNAME = 'GitHub Actions'
 const BUMP_COMMIT_EMAIL = 'ci@rudydelorenzo.noreply.ca'
 
 const bump = (type) => {
-    execSync(`npm version ${type} -m "Bump to v. %s" --force`)
+    execSync(`npm version ${type} -m "Bump to v%s" --force`)
 }
 
 const getMatchInMessages = (messages, matchRegex) => {
@@ -39,7 +39,7 @@ console.log(commitMessages)
 if (getMatchInMessages(commitMessages, /BREAKING/)) {
     console.log('BUMPING MAJOR')
     bump('major')
-} else if (getMatchInMessages(commitMessages, /feat/)) {
+} else if (getMatchInMessages(commitMessages, /feat:/)) {
     console.log('BUMPING MINOR')
     bump('minor')
 } else {
