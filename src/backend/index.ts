@@ -16,7 +16,7 @@ const backendPort = process.env.PORT || 3003;
 
 console.log("env = " + ENV)
 
-const log = (message?: any, ...optionalParams: any[]): void => {
+const log = (message?: unknown, ...optionalParams: unknown[]): void => {
   if (ENV !== 'production') {
     if (optionalParams) {
       console.log(message, optionalParams)
@@ -82,7 +82,7 @@ const split = async (file: Express.Multer.File): Promise<string> => {
   return ZIP_OUTPUT_PATH;
 };
 
-app.listen(backendPort, () => console.log(`Listening on port ${backendPort}`));
+app.listen(backendPort, () => console.log(`Listening on http://localhost:${backendPort}`));
 
 app.use(express.static("dist/frontend"));
 app.use(express.json());

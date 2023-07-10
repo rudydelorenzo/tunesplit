@@ -7,7 +7,9 @@
 > You'll need [docker](https://www.docker.com/) to run this application
  
 ### Run the app
-`npm run docker`
+Use `npm run docker` to build and run the docker env (with `docker-compose`)
+
+This will expose the app on `localhost:3003`
 
 ### Run in deployment (CI USE)
 `npm run docker-deploy`
