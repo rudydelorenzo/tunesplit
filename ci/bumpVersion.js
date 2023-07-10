@@ -22,8 +22,8 @@ if (!process.env.GITHUB_EVENT_PATH && !IN_DEVELOPMENT) {
 // Begin script logic proper
 
 // SET USER AND EMAIL
-execSync(`git config user.name "${BUMP_COMMIT_USERNAME}"`).toString()
-execSync(`git config user.email "${BUMP_COMMIT_EMAIL}"`).toString()
+execSync(`git config user.name "${BUMP_COMMIT_USERNAME}" --replace-all`).toString()
+execSync(`git config user.email "${BUMP_COMMIT_EMAIL}" --replace-all`).toString()
 
 const commits = JSON.parse(
     await readFile(
