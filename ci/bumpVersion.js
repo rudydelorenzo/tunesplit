@@ -39,8 +39,6 @@ if (!commits) {
     process.exit(0)
 }
 
-console.log(commits)
-
 const commitMessages = commits.map((commit) => commit.message)
 
 console.log('Commit Messages:')
