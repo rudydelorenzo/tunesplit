@@ -84,7 +84,7 @@ export function DropzoneButton({
             <Dropzone.Idle>Upload audio</Dropzone.Idle>
           </Text>
           <Text ta="center" fz="sm" mt="xs" c="dimmed">
-            Drag&apos;n&apos;drop files here to upload. We can accept only audio
+            Drag & drop files here to upload. We can accept only audio
             files.
           </Text>
         </div>
