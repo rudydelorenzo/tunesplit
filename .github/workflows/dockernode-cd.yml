@@ -15,8 +15,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
       - name: Bump version
         run: node ci/bumpVersion.js
       - name: Start docker compose
