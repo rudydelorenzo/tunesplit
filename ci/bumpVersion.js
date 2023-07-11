@@ -1,12 +1,13 @@
-import {execSync} from "child_process";
+import { execSync } from "child_process";
 import { readFile } from 'fs/promises';
 
-const IN_DEVELOPMENT = true;
+const IN_DEVELOPMENT = false;
 const BUMP_COMMIT_USERNAME = 'GitHub Actions'
 const BUMP_COMMIT_EMAIL = 'ci@rudydelorenzo.noreply.ca'
 
 const bump = (type) => {
-    execSync(`npm version ${type} -m "Bump to v%s" --force`)
+    // use --force option if "dirty working tree" errors
+    execSync(`npm version ${type} -m "Bump to v%s"`)
 }
 
 const getMatchInMessages = (messages, matchRegex) => {
@@ -15,6 +16,7 @@ const getMatchInMessages = (messages, matchRegex) => {
     }
 }
 
+// Check that GitHub ENV variables are present
 if (!process.env.GITHUB_EVENT_PATH && !IN_DEVELOPMENT) {
     process.exit(1);
 }
@@ -22,8 +24,9 @@ if (!process.env.GITHUB_EVENT_PATH && !IN_DEVELOPMENT) {
 // Begin script logic proper
 
 // SET USER AND EMAIL
-execSync(`git config user.name "${BUMP_COMMIT_USERNAME}" --replace-all`).toString()
-execSync(`git config user.email "${BUMP_COMMIT_EMAIL}" --replace-all`).toString()
+// use --replace-all flag if errors
+execSync(`git config user.name "${BUMP_COMMIT_USERNAME}"`).toString()
+execSync(`git config user.email "${BUMP_COMMIT_EMAIL}"`).toString()
 
 const commits = JSON.parse(
     await readFile(
@@ -31,9 +34,14 @@ const commits = JSON.parse(
     )
 ).commits;
 
+if (!commits) {
+    console.log('NO COMMITS, SKIPPING BUMP AND PUSH')
+    process.exit(0)
+}
+
 const commitMessages = commits.map((commit) => commit.message)
 
-console.log('commitMessages:')
+console.log('Commit Messages:')
 console.log(commitMessages)
 
 if (getMatchInMessages(commitMessages, /BREAKING/)) {
