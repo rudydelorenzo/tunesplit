@@ -2,11 +2,13 @@ import "./App.css";
 import { DropzoneButton } from "./Dropzone";
 import { FileRejection, FileWithPath } from "@mantine/dropzone";
 import { useState } from "react";
-import { Dialog, Flex, Group, Progress, Text } from "@mantine/core";
+import { Dialog, Flex, Group, Progress, Stack, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconCloudExclamation, IconHeart } from "@tabler/icons-react";
 import { version } from "../../package.json";
 import { MessageType } from "../types";
+
+let startTime = 0;
 
 const getWebSocketURL = (relativeUrl: string) => {
     const loc = window.location;
@@ -97,6 +99,8 @@ function App() {
 
     const handleOnFileSelected = async (files: FileWithPath[]) => {
         setIsLoading(true);
+        setProgress(0);
+        startTime = Date.now();
 
         const fileWithPath = files[0];
 
@@ -128,6 +132,9 @@ function App() {
     const handleFileRejection = (files: FileRejection[]) =>
         console.log("rejected files", files);
 
+    const secondsLeft =
+        (((Date.now() - startTime) / progress) * (100 - progress)) / 1000;
+
     return (
         <>
             <h1>TuneSplit2</h1>
@@ -137,7 +144,17 @@ function App() {
                     onReject={handleFileRejection}
                 />
             ) : (
-                <Progress value={progress} />
+                <Stack>
+                    <Text>Converting...</Text>
+                    <Progress value={progress} animate={true} />
+                    <Text>
+                        {progress}% - Remaining:{" "}
+                        {Math.floor(secondsLeft / 60)
+                            .toFixed(0)
+                            .padStart(2, "0")}
+                        :{(secondsLeft % 60).toFixed(0).padStart(2, "0")}
+                    </Text>
+                </Stack>
             )}
 
             <Dialog
