@@ -1,18 +1,19 @@
 import express from "express";
 import multer from "multer";
-import { execSync } from "child_process";
 import path from "path";
 import { v4 as uuidv4 } from "uuid";
 import { zipDirectory } from "./zipDirectory.js";
 import * as fs from "fs";
 import { schedule } from "node-cron";
+import { sleep } from "./helpers.js";
+import { spawnSync } from "./spawnSync.js";
 
 const UPLOAD_FOLDER_NAME = "uploads";
 const SPLEETER_OUTPUT_DIR = "demucs_output";
 const ZIP_OUTPUT_FOLDER_NAME = "zipped_output";
 const MODEL_NAME = "htdemucs";
 
-const SPEETER_MODES = {
+const SPLEETER_MODES = {
     TWO_STEMS: "--two-stems vocals",
     FOUR_STEMS: "",
 } as const;
@@ -56,12 +57,28 @@ const split = async (file: Express.Multer.File): Promise<string> => {
 
     // demucs --two-stem vocals -d cpu -n htdemucs --clip-mode rescale -o "spleeter_output" "Joel Corry - HISTORY.flac"
 
-    execSync(
-        `demucs -d cpu -n ${MODEL_NAME} --clip-mode rescale ${SPEETER_MODES.TWO_STEMS} -o ${SPLEETER_OUTPUT_DIR} "${file.path}"`,
-        {
-            stdio: ENV !== "production" ? "inherit" : "ignore",
-        }
-    );
+    const flags: string[] = [
+        "-d",
+        "cpu",
+        "-n",
+        MODEL_NAME,
+        "--clip-mode",
+        "rescale",
+        "-o",
+        `${SPLEETER_OUTPUT_DIR}`,
+    ];
+
+    if (SPLEETER_MODES.TWO_STEMS) {
+        flags.push(...["--two-stems", "vocals"]);
+    }
+
+    flags.push(`"${file.path}"`);
+
+    await spawnSync(`demucs`, flags, {}, (data) => log(data));
+
+    log("FINISHED SPLITTING");
+
+    await sleep(90 * 1000);
 
     // delete original uploaded file
     fs.rmSync(file.path, { recursive: true, force: true });
