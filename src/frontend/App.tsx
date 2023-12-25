@@ -107,7 +107,7 @@ function App() {
 
   return (
     <>
-      <h1>TuneSplit</h1>
+      <h1>TuneSplit2</h1>
       <DropzoneButton
         onDrop={handleOnFileSelected}
         onReject={handleFileRejection}

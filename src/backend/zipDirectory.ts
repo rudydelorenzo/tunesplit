@@ -2,8 +2,8 @@ import archiver from "archiver";
 import * as fs from "fs";
 
 /**
- * @param {String} sourceDir: /some/folder/to/compress
- * @param {String} outPath: /path/to/created.zip
+ * @param {string} sourceDir /some/folder/to/compress
+ * @param {string} outPath /path/to/created.zip
  * @returns {Promise}
  */
 export const zipDirectory = (

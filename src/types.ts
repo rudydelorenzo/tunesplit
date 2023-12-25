@@ -16,7 +16,7 @@ export const MIME_AUDIO_TYPES = {
   ram: "audio/vnd.rn-realaudio",
   Ogg_Vorbis: "audio/ogg",
   Vorbis: "audio/vorbis",
-  wav: "audio/vnd.wav",
+  wav: "audio/wav",
   flac: "audio/flac",
 } as const;
 

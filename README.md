@@ -1,4 +1,4 @@
-# TuneSplit
+# TuneSplit2
 
 ## Usage
 
