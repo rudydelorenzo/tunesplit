@@ -1,12 +1,13 @@
 import express from "express";
-import multer from "multer";
 import path from "path";
 import { v4 as uuidv4 } from "uuid";
 import { zipDirectory } from "./zipDirectory.js";
 import * as fs from "fs";
 import { schedule } from "node-cron";
-import { sleep } from "./helpers.js";
-import { spawnSync } from "./spawnSync.js";
+import { customSpawnSync } from "./spawnSync.js";
+import expressWs from "express-ws";
+import { MessageType, ProgressMessageType } from "./typesBackend.js";
+import { fileTypeFromBuffer } from "file-type";
 
 const UPLOAD_FOLDER_NAME = "uploads";
 const SPLEETER_OUTPUT_DIR = "demucs_output";
@@ -33,25 +34,15 @@ const log = (message?: unknown, ...optionalParams: unknown[]): void => {
     }
 };
 
-const app = express();
-
-const storage = multer.diskStorage({
-    destination: function (_req, _file, cb) {
-        const path = `${UPLOAD_FOLDER_NAME}/`;
-        fs.mkdirSync(path, { recursive: true });
-        cb(null, path);
-    },
-    filename: function (_req, file, cb) {
-        cb(null, uuidv4() + path.extname(file.originalname)); //Appending .jpg
-    },
-});
-
-const upload = multer({ storage: storage });
+const { app } = expressWs(express());
 
 const getBaseFileName = (fullname: string): string => path.parse(fullname).name;
 
-const split = async (file: Express.Multer.File): Promise<string> => {
-    const SPLEETER_RESULT_FOLDER_NAME = getBaseFileName(file.filename);
+const split = async (
+    filePath: string,
+    logCallback?: (s: string) => unknown
+): Promise<string> => {
+    const SPLEETER_RESULT_FOLDER_NAME = getBaseFileName(filePath);
 
     log("START SPLITTING...");
 
@@ -64,24 +55,18 @@ const split = async (file: Express.Multer.File): Promise<string> => {
         MODEL_NAME,
         "--clip-mode",
         "rescale",
+        ...SPLEETER_MODES.TWO_STEMS.split(" "),
         "-o",
         `${SPLEETER_OUTPUT_DIR}`,
+        `"${filePath}"`,
     ];
 
-    if (SPLEETER_MODES.TWO_STEMS) {
-        flags.push(...["--two-stems", "vocals"]);
-    }
-
-    flags.push(`"${file.path}"`);
-
-    await spawnSync(`demucs`, flags, {}, (data) => log(data));
+    await customSpawnSync(`demucs`, flags, {}, logCallback);
 
     log("FINISHED SPLITTING");
 
-    await sleep(90 * 1000);
-
     // delete original uploaded file
-    fs.rmSync(file.path, { recursive: true, force: true });
+    fs.rmSync(filePath, { recursive: true, force: true });
 
     log(`DONE SPLITTING`);
 
@@ -113,36 +98,72 @@ app.listen(backendPort, () =>
 );
 
 app.use(express.static("dist/frontend"));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
-// create a GET route
-app.post(`/convert`, upload.array("files"), async (req, res) => {
+// WS Route
+app.ws("/separate", (ws, req) => {
+    ws.binaryType = "arraybuffer";
     try {
         const requestIp =
             req.headers["x-real-ip"] ??
             req.headers["x-forwarded-for"] ??
             req.socket.remoteAddress;
         log(`REQUEST: ${requestIp}`);
-        const files = req.files;
 
-        const filesToDownload: string[] = [];
+        ws.on("message", async (msg: ArrayBuffer | string) => {
+            if (msg instanceof ArrayBuffer) {
+                // handle file
+                const path = `${UPLOAD_FOLDER_NAME}/`;
+                if (!fs.existsSync(path))
+                    fs.mkdirSync(path, { recursive: true });
 
-        if (files && files instanceof Array) {
-            for (const file of files) {
-                filesToDownload.push(await split(file));
-            }
-        }
+                const filenameToConvert = `${uuidv4()}.${
+                    (await fileTypeFromBuffer(msg))?.ext
+                }`;
 
-        for (const path of filesToDownload) {
-            log(`SERVING DOWNLOAD FOR ${path}...`);
-            res.download(path, (_err) => {
-                fs.rmSync(path, { recursive: true, force: true });
+                log(filenameToConvert);
+
+                const fullFilePathToConvert = `${path}${filenameToConvert}`;
+
+                fs.appendFileSync(fullFilePathToConvert, new Uint8Array(msg));
+
+                const logCallback = (s: string) => {
+                    const matches = s.match(/\d+(?:\.\d+)?%/);
+                    if (matches) {
+                        try {
+                            const num = parseFloat(
+                                matches[matches.length - 1].slice(0, -1)
+                            );
+                            const progressUpdate: ProgressMessageType = {
+                                type: "progress",
+                                progress: num,
+                            };
+                            ws.send(JSON.stringify(progressUpdate));
+                        } catch (e) {
+                            log("ERROR PARSING NUMBER FROM LOG");
+                        }
+                    }
+                };
+
+                const fileToDownload = await split(
+                    fullFilePathToConvert,
+                    logCallback
+                );
+
+                const arrayBufferToReturn: ArrayBuffer =
+                    fs.readFileSync(fileToDownload);
+
+                log(`SERVING DOWNLOAD FOR ${fileToDownload}...`);
+                ws.send(arrayBufferToReturn);
+
+                fs.rmSync(fileToDownload, { recursive: true, force: true });
                 log("DONE SERVING. REMOVED OUTPUT ZIP");
-            });
-        }
+            } else {
+                const message: MessageType = JSON.parse(msg);
+                console.log(message);
+            }
+        });
     } catch (e) {
-        res.sendStatus(500);
+        ws.close(1);
     }
 
     return;
