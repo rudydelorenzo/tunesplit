@@ -1,14 +1,11 @@
 import express from "express";
 import multer from "multer";
-import { exec as execOriginal } from "child_process";
+import { execSync } from "child_process";
 import path from "path";
 import { v4 as uuidv4 } from "uuid";
 import { zipDirectory } from "./zipDirectory.js";
 import * as fs from "fs";
 import { schedule } from "node-cron";
-import { promisify } from "util";
-
-const execSync = promisify(execOriginal);
 
 const UPLOAD_FOLDER_NAME = "uploads";
 const SPLEETER_OUTPUT_DIR = "demucs_output";
@@ -59,7 +56,7 @@ const split = async (file: Express.Multer.File): Promise<string> => {
 
     // demucs --two-stem vocals -d cpu -n htdemucs --clip-mode rescale -o "spleeter_output" "Joel Corry - HISTORY.flac"
 
-    const { stdout, stderr } = execSync(
+    execSync(
         `demucs -d cpu -n ${MODEL_NAME} --clip-mode rescale ${SPEETER_MODES.TWO_STEMS} -o ${SPLEETER_OUTPUT_DIR} "${file.path}"`,
         {
             stdio: ENV !== "production" ? "inherit" : "ignore",
