@@ -1,6 +1,6 @@
 import { spawn } from "child_process";
 
-export const spawnSync = (
+export const customSpawnSync = (
     command: Parameters<typeof spawn>[0],
     args: Parameters<typeof spawn>[1],
     options: Parameters<typeof spawn>[2],
@@ -10,27 +10,29 @@ export const spawnSync = (
         const opts: Parameters<typeof spawn>[2] = {
             ...options,
             ...{
-                stdio: "inherit",
+                stdio: "pipe",
+                shell: true,
+                env: {
+                    ...options.env,
+                    ...{
+                        ...{ FORCE_COLOR: "1" },
+                    },
+                },
             },
         };
 
         const proc = spawn(command, args, opts);
 
         if (loggingCallback) {
-            proc.stderr?.on("data", (data) => {
-                console.log("HIIII");
-                loggingCallback(data.toString());
-            });
+            proc.stderr?.on("data", (data) => loggingCallback(data.toString()));
             proc.stdout?.on("data", (data) => loggingCallback(data.toString()));
         }
 
         proc.on("exit", () => {
-            console.log("EXITT");
             resolve();
         });
 
         proc.on("error", () => {
-            console.log("ERRORRR");
             reject();
         });
     });
