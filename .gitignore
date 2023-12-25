@@ -26,3 +26,4 @@ dist-ssr
 uploads
 pretrained_models
 output
+zipped_output
