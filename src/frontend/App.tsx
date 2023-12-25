@@ -145,14 +145,17 @@ function App() {
                 />
             ) : (
                 <Stack>
-                    <Text>Converting...</Text>
-                    <Progress value={progress} animate={true} />
+                    <Text>Splitting...</Text>
+                    <Progress value={progress} animate={true} h={"lg"} />
                     <Text>
                         {progress}% - Remaining:{" "}
-                        {Math.floor(secondsLeft / 60)
-                            .toFixed(0)
-                            .padStart(2, "0")}
-                        :{(secondsLeft % 60).toFixed(0).padStart(2, "0")}
+                        {progress === 0
+                            ? "uploading..."
+                            : `${Math.floor(secondsLeft / 60)
+                                  .toFixed(0)
+                                  .padStart(2, "0")}:${(secondsLeft % 60)
+                                  .toFixed(0)
+                                  .padStart(2, "0")}`}
                     </Text>
                 </Stack>
             )}
@@ -211,8 +214,8 @@ function App() {
                 </Flex>
                 <p className="read-the-docs">
                     Separation by{" "}
-                    <a href={"https://github.com/deezer/spleeter"}>spleeter</a>{" "}
-                    | v. {version}
+                    <a href={"https://github.com/adefossez/demucs"}>demucs</a> |
+                    v. {version}
                 </p>
             </div>
         </>
