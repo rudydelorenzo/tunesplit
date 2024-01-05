@@ -3,14 +3,13 @@ services:
     environment:
       - ENVIRONMENT=production
     build: .
-    container_name: tunesplit2_app
+    container_name: tunesplit_app
     ports:
       - "3003:3003"
     volumes:
-      # - models:/usr/src/app/pretrained_models
       - models:/root/.cache/torch/hub/checkpoints
     restart: always
 
 volumes:
   models:
-    name: tunesplit2_models
+    name: tunesplit_models
