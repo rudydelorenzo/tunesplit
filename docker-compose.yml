@@ -1,8 +1,10 @@
 services:
   app:
+    build:
+      context: .
+    image: "rdelorenzo/tunesplit:latest"
     environment:
       - ENVIRONMENT=production
-    build: .
     container_name: tunesplit_app
     ports:
       - "3003:3003"

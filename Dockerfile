@@ -32,6 +32,4 @@ COPY . .
 
 EXPOSE 3003
 
-# ENTRYPOINT ["tail", "-f", "/dev/null"]
-
 CMD [ "npm", "run", "start-prod" ]
