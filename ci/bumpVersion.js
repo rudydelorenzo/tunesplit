@@ -7,7 +7,10 @@ const BUMP_COMMIT_EMAIL = "ci@rudydelorenzo.noreply.ca";
 
 const bump = (type) => {
     // use --force option if "dirty working tree" errors
-    execSync(`npm version ${type} -m "Bump to v%s"`);
+    try {
+        // may fail if tag already exists (aka you rerun pipeline)
+        execSync(`npm version ${type} -m "Bump to v%s"`);
+    } catch (e) {}
 };
 
 const getMatchInMessages = (messages, matchRegex) => {
