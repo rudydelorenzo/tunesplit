@@ -20,6 +20,7 @@ const SPLEETER_MODES = {
 } as const;
 
 const ENV = process.env.ENVIRONMENT || "development";
+const USE_GPU = process.env.USE_GPU === "true" || false;
 const backendPort = process.env.PORT || 3003;
 
 console.log("env = " + ENV);
@@ -48,9 +49,12 @@ const split = async (
 
     // demucs --two-stem vocals -d cpu -n htdemucs --clip-mode rescale -o "spleeter_output" "Joel Corry - HISTORY.flac"
 
-    const flags: string[] = [
+    const flags: string[] = USE_GPU ? [] : [
         "-d",
         "cpu",
+    ];
+
+    flags.push(...[
         "-n",
         MODEL_NAME,
         "--clip-mode",
@@ -59,7 +63,7 @@ const split = async (
         "-o",
         `${SPLEETER_OUTPUT_DIR}`,
         `"${filePath}"`,
-    ];
+    ])
 
     await customSpawnSync(`demucs`, flags, {}, logCallback);
 
