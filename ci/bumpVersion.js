@@ -57,5 +57,10 @@ if (getMatchInMessages(commitMessages, /BREAKING/)) {
 }
 
 console.log("PUSHING");
-execSync("git push");
+try {
+    execSync("git push");
+} catch (e) {
+    console.log('NOT PUSHING FOR REASON:')
+    console.log(e.message)
+}
 console.log("PUSHED");
