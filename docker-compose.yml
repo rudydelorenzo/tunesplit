@@ -1,6 +1,8 @@
 services:
   app:
-    build: .
+    build:
+      context: .
+    image: rdelorenzo/tunesplit:dev
     environment:
       - ENVIRONMENT=development
     container_name: tunesplit_app

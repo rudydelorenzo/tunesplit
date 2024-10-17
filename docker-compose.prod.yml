@@ -1,11 +1,5 @@
 services:
   app:
-    build:
-      context: .
     image: rdelorenzo/tunesplit:latest
     environment:
       - ENVIRONMENT=production
-  version_tag:
-    extends:
-      service: app
-    image: rdelorenzo/tunesplit:0.0.0
