@@ -1,6 +1,0 @@
-services:
-  app:
-    image: !reset null
-    build: .
-    environment:
-      - ENVIRONMENT=development

@@ -2,7 +2,7 @@ import "./App.css";
 import { DropzoneButton } from "./Dropzone";
 import { FileRejection, FileWithPath } from "@mantine/dropzone";
 import { useState } from "react";
-import { Dialog, Flex, Group, Progress, Stack, Text } from "@mantine/core";
+import { Dialog, Flex, Group, Progress, SegmentedControl, Stack, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconCloudExclamation, IconHeart } from "@tabler/icons-react";
 import { version } from "../../package.json";
@@ -56,6 +56,7 @@ function showDownload(data: Blob, name: string, _mimetype: string) {
 
 const submitFilesForSplitting = (
     files: File[],
+    mode: "TWO_STEMS" | "FOUR_STEMS",
     setProgress?: (num: number) => void
 ): Promise<Blob> => {
     return new Promise((resolve) => {
@@ -78,6 +79,11 @@ const submitFilesForSplitting = (
             if (files.length === 1) {
                 const file: File = files[0];
 
+                ws.send(JSON.stringify({
+                    type: "stems",
+                    data: mode
+                }))
+
                 file.arrayBuffer().then((arrayBuffer) => {
                     ws.send(arrayBuffer);
                 });
@@ -85,6 +91,14 @@ const submitFilesForSplitting = (
         });
     });
 };
+
+const LABELS_WITH_SPLITTING_MODES: {
+   label: string;
+   value: "TWO_STEMS" | "FOUR_STEMS"
+}[] = [
+    {label: "2 Stems", value: "TWO_STEMS"},
+    {label: "4 Stems", value: "FOUR_STEMS"},
+]
 
 function App() {
     const [isLoading, setIsLoading] = useState(false);
@@ -94,6 +108,7 @@ function App() {
     }>();
     const [opened, { open, close }] = useDisclosure(false);
     const [progress, setProgress] = useState(0);
+    const [mode, setMode] = useState<"TWO_STEMS" | "FOUR_STEMS">("TWO_STEMS")
 
     const DIALOG_AUTO_DISMISS_SECONDS = 5;
 
@@ -107,6 +122,7 @@ function App() {
         try {
             const responseFile: Blob = await submitFilesForSplitting(
                 [fileWithPath],
+                mode,
                 setProgress
             );
 
@@ -139,10 +155,18 @@ function App() {
         <>
             <h1>TuneSplit</h1>
             {!isLoading ? (
-                <DropzoneButton
-                    onDrop={handleOnFileSelected}
-                    onReject={handleFileRejection}
-                />
+                <Stack>
+                    <DropzoneButton
+                        onDrop={handleOnFileSelected}
+                        onReject={handleFileRejection}
+                    />
+                    <SegmentedControl
+                        value={mode}
+                        onChange={setMode as (s: string) => void}
+                        data={LABELS_WITH_SPLITTING_MODES}
+                    />
+                </Stack>
+
             ) : (
                 <Stack>
                     <Text>Splitting...</Text>

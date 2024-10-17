@@ -22,6 +22,8 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Add versioned image tags
+        run: node ci/addDockerVersionTag.js
       - name: Start docker compose
         run: npm run docker-deploy
       - name: Publish docker image

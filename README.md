@@ -1,12 +1,37 @@
 # TuneSplit
 
+An AI driven, GPU-accelerated stem separation webapp based on `demucs`
+
 ## Usage
 
 > **Note**
 > 
 > You'll need [docker](https://www.docker.com/) to run this application
  
-### Run the app
+### Using docker (Recommended)
+As of version 2.1.0, TuneSplit is published as a ready-to-go, batteries included image to docker hub.
+
+To quickly get started you can use the following `docker-compose.yml`:
+```yaml
+services:
+  app:
+    image: rdelorenzo/tunesplit:latest
+    environment:
+      - ENVIRONMENT=production  # just silences logs
+    ports:
+      - "3003:3003"
+    volumes:
+      - models:/root/.cache/torch/hub/checkpoints
+    restart: always
+
+volumes:
+  models:
+```
+
+For more details on the image, including more detailed instructions and even how to enable GPU support, 
+check the [image overview on docker hub](https://hub.docker.com/r/rdelorenzo/tunesplit).
+
+### Build from source
 Use `npm run docker` to build and run the docker env (with `docker-compose`)
 
 This will expose the app on `localhost:3003`

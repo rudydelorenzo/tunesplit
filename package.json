@@ -15,8 +15,8 @@
     "start-prod": "npm run build && npm start",
     "start-dev": "vite build --watch & nodemon --watch ./src/backend --ignore ./dist/ --exec \"npm run build-backend && npm start\"",
     "dev-frontend": "npm run dev",
-    "docker": "docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build",
-    "docker-deploy": "docker compose up --build --detach"
+    "docker": "docker compose up --build",
+    "docker-deploy": "docker compose -f docker-compose.yml -f docker-compose.prod.yml up --build --detach"
   },
   "dependencies": {
     "@emotion/react": "^11.11.1",
@@ -56,7 +56,8 @@
     "nodemon": "^2.0.22",
     "prettier": "^2.8.8",
     "typescript": "^5.0.2",
-    "vite": "^4.3.9"
+    "vite": "^4.3.9",
+    "yaml": "^2.6.0"
   },
   "config": {
     "commitizen": {

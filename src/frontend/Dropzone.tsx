@@ -4,6 +4,8 @@ import { Dropzone, DropzoneProps } from "@mantine/dropzone";
 import { IconCloudUpload, IconX, IconDownload } from "@tabler/icons-react";
 import { MIME_AUDIO_TYPES } from "../types";
 
+const MAX_FILE_SIZE_GB = 5;
+
 const useStyles = createStyles((theme) => ({
     wrapper: {
         position: "relative",
@@ -36,8 +38,6 @@ export function DropzoneButton({
 }: Pick<DropzoneProps, "onDrop"> & Partial<DropzoneProps>) {
     const { classes, theme } = useStyles();
     const openRef = useRef<() => void>(null);
-
-    const MAX_FILE_SIZE_GB = 5;
 
     return (
         <div className={classes.wrapper}>

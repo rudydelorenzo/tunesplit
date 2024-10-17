@@ -8,16 +8,12 @@ import { customSpawnSync } from "./spawnSync.js";
 import expressWs from "express-ws";
 import { MessageType, ProgressMessageType } from "./typesBackend.js";
 import { fileTypeFromBuffer } from "file-type";
+import { SPLITTING_MODES } from "./constants.js";
 
 const UPLOAD_FOLDER_NAME = "uploads";
 const SPLEETER_OUTPUT_DIR = "demucs_output";
 const ZIP_OUTPUT_FOLDER_NAME = "zipped_output";
 const MODEL_NAME = "htdemucs";
-
-const SPLEETER_MODES = {
-    TWO_STEMS: "--two-stems vocals",
-    FOUR_STEMS: "",
-} as const;
 
 const ENV = process.env.ENVIRONMENT || "development";
 const USE_GPU = process.env.USE_GPU === "true" || false;
@@ -41,13 +37,12 @@ const getBaseFileName = (fullname: string): string => path.parse(fullname).name;
 
 const split = async (
     filePath: string,
-    logCallback?: (s: string) => unknown
+    mode: keyof typeof SPLITTING_MODES,
+    logCallback?: (s: string) => unknown,
 ): Promise<string> => {
     const SPLEETER_RESULT_FOLDER_NAME = getBaseFileName(filePath);
 
     log("START SPLITTING...");
-
-    // demucs --two-stem vocals -d cpu -n htdemucs --clip-mode rescale -o "spleeter_output" "Joel Corry - HISTORY.flac"
 
     const flags: string[] = USE_GPU ? [] : [
         "-d",
@@ -59,7 +54,7 @@ const split = async (
         MODEL_NAME,
         "--clip-mode",
         "rescale",
-        ...SPLEETER_MODES.TWO_STEMS.split(" "),
+        ...SPLITTING_MODES[mode].split(" "),
         "-o",
         `${SPLEETER_OUTPUT_DIR}`,
         `"${filePath}"`,
@@ -105,7 +100,10 @@ app.use(express.static("dist/frontend"));
 
 // WS Route
 app.ws("/separate", (ws, req) => {
+    let separation_type: keyof typeof SPLITTING_MODES = "TWO_STEMS"
+
     ws.binaryType = "arraybuffer";
+
     try {
         const requestIp =
             req.headers["x-real-ip"] ??
@@ -150,6 +148,7 @@ app.ws("/separate", (ws, req) => {
 
                 const fileToDownload = await split(
                     fullFilePathToConvert,
+                    separation_type,
                     logCallback
                 );
 
@@ -163,6 +162,9 @@ app.ws("/separate", (ws, req) => {
                 log("DONE SERVING. REMOVED OUTPUT ZIP");
             } else {
                 const message: MessageType = JSON.parse(msg);
+                if (message.type === 'stems') {
+                    separation_type = message.data
+                }
                 console.log(message);
             }
         });
