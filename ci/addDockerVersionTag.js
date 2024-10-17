@@ -11,4 +11,5 @@ console.log('tagging docker image with: ', VERSION)
 const imageId = execSync('docker image ls rdelorenzo/tunesplit:latest -q').toString().trim()
 
 execSync(`docker tag ${imageId} rdelorenzo/tunesplit:${VERSION}`)
-execSync(`docker push rdelorenzo/tunesplit --all-tags`, {stdio: "inherit"})
+execSync(`docker push rdelorenzo/tunesplit:latest`, {stdio: "inherit"})
+execSync(`docker push rdelorenzo/tunesplit:${VERSION}`, {stdio: "inherit"})
