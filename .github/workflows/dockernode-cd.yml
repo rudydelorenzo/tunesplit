@@ -26,7 +26,7 @@ jobs:
         run: npm run docker-deploy
       - name: Add & push versioned image tags
         run: node ci/addDockerVersionTag.js
-#      - name: Publish docker image
-#        run: docker compose push
+      - name: Publish docker image
+        run: docker compose push
       - name: Check if online (15 tries with backoff)
         run: wget --retry-connrefused --tries=15 --spider localhost:3003
