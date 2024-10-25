@@ -18,6 +18,7 @@ export const MIME_AUDIO_TYPES = {
     Vorbis: "audio/vorbis",
     wav: "audio/wav",
     flac: "audio/flac",
+    m4a: "audio/x-m4a",
 } as const;
 
 export type MessageType = ProgressMessageType;
