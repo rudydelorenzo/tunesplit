@@ -8,6 +8,13 @@ RUN apt-get -y install curl
 RUN apt-get -y install python3 python3-pip ffmpeg
 RUN pip3 install demucs
 
+# Healthcheck
+# Use curl to ping the internal health endpoint
+RUN apt-get update && apt-get install curl -y
+
+HEALTHCHECK --interval=60s --timeout=10s --start-period=10s --retries=3 \
+  CMD curl --fail --silent --show-error http://localhost:3003/api/healthz || exit 1
+
 ## INSTALL NODE 20.x LTS
 RUN set -uex; \
     apt-get update; \

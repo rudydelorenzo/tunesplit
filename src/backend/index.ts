@@ -98,6 +98,46 @@ app.listen(backendPort, () =>
 
 app.use(express.static("dist/frontend"));
 
+app.get("/api/healthz", async (_req, res) => {
+    const health: {
+        status: "ok" | "degraded";
+        gpu?: "available" | "unavailable"
+    } = {
+        status: "ok",
+    };
+
+    if (USE_GPU) {
+        let output = "";
+        const captureOutput = (data: string) => {
+            output += data;
+        };
+
+        try {
+            await customSpawnSync(
+                "python3",
+                ["-c", "'import torch; print(torch.cuda.is_available())'"],
+                {},
+                captureOutput
+            );
+
+            if (output.includes("True")) {
+                health.gpu = "available";
+            } else {
+                log(`GPU HEALTHCHECK OUTPUT: ${output}`);
+                health.status = "degraded";
+                health.gpu = "unavailable";
+            }
+        } catch (e) {
+            log("GPU HEALTHCHECK FAILED TO SPAWN", e);
+            health.status = "degraded";
+            health.gpu = "unavailable";
+        }
+    }
+
+    res.status(health.status === "ok" ? 200 : 503).json(health);
+});
+
+
 // WS Route
 app.ws("/separate", (ws, req) => {
     let separation_type: keyof typeof SPLITTING_MODES = "TWO_STEMS"
